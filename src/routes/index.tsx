@@ -40,7 +40,10 @@ function Home() {
 
   async function lookupOrder() {
     const { data: items, error } = await supabase.rpc("get_order", { _code: q.trim().toUpperCase() });
-    if (error || !items) return toast.error("No order found for that code");
+    if (error || !items) {
+      toast.error("No order found for that code");
+      return;
+    }
     replace(items as unknown as CartItem[]);
     toast.success("Order loaded into GET");
     navigate({ to: "/get" });
