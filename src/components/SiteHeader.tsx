@@ -63,7 +63,7 @@ export function SiteHeader() {
               <div>
                 <h3 className="text-2xl text-foreground">Our story</h3>
                 <p>
-                  Founded in 2024, ONUR started as a small sewing table and a big idea: clothes should
+                  Founded in 2026 may, ONUR started as a small sewing table and a big idea: clothes should
                   fit who you are, not just your size. Every piece begins as a sketch, gets cut by hand
                   and is stitched with care before it reaches you.
                 </p>
