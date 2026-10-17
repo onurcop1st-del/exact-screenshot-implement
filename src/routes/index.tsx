@@ -16,6 +16,8 @@ export const Route = createFileRoute("/")({
       { name: "description", content: "Shop ONUR tees, hoodies, caps and accessories. Pick, GET, and order on WhatsApp." },
       { property: "og:title", content: "ONUR — Streetwear Drops" },
       { property: "og:description", content: "Shop ONUR streetwear and order on WhatsApp." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Home,

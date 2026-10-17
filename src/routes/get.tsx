@@ -14,6 +14,8 @@ export const Route = createFileRoute("/get")({
       { name: "description", content: "Review your ONUR picks, get your order code and send it on WhatsApp." },
       { property: "og:title", content: "Your GET list — ONUR" },
       { property: "og:description", content: "Review picks and order ONUR on WhatsApp." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: GetPage,
