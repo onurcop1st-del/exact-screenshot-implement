@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Admin Auth lifecycle belongs in `use-admin-session`; use the configured Auth client, clear query caches before sign-out, and hide inventory on invalid sessions to prevent stale admin data.

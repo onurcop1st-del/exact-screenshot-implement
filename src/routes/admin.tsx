@@ -1,8 +1,9 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState, type FormEvent } from "react";
 import { toast } from "sonner";
-import type { Session } from "@supabase/supabase-js";
+import { LogOut } from "lucide-react";
+import { useAdminSession } from "@/hooks/use-admin-session";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -17,49 +18,56 @@ export const Route = createFileRoute("/admin")({
       { property: "og:title", content: "Admin — ONUR" },
       { property: "og:description", content: "ONUR inventory management." },
       { name: "robots", content: "noindex" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: AdminPage,
 });
 
 function AdminPage() {
-  const [session, setSession] = useState<Session | null>(null);
-  const [ready, setReady] = useState(false);
+  const { session, ready, expired, ending, signOut } = useAdminSession();
+  const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState(false);
+  const [checkingRole, setCheckingRole] = useState(true);
+  async function handleSignOut() {
+    await signOut();
+    await navigate({ to: "/admin", replace: true });
+  }
 
   useEffect(() => {
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, s) => setSession(s));
-    supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session);
-      setReady(true);
-    });
-    return () => sub.subscription.unsubscribe();
-  }, []);
-
-  useEffect(() => {
-    if (!session) return setIsAdmin(false);
+    let active = true;
+    setIsAdmin(false);
+    if (!session) { setCheckingRole(false); return; }
+    setCheckingRole(true);
     supabase
       .from("user_roles")
       .select("role")
       .eq("user_id", session.user.id)
       .eq("role", "admin")
       .maybeSingle()
-      .then(({ data }) => setIsAdmin(!!data));
+      .then(({ data }) => {
+        if (!active) return;
+        setIsAdmin(Boolean(data));
+        setCheckingRole(false);
+      });
+    return () => { active = false; };
   }, [session]);
 
-  if (!ready) return null;
-  if (!session) return <Login />;
+  if (!ready || ending) return <p role="status" className="p-6 text-muted-foreground">{ending ? "Signing out…" : "Checking session…"}</p>;
+  if (!session) return <Login expired={expired} />;
+  if (checkingRole) return <p role="status" className="p-6 text-muted-foreground">Checking admin access…</p>;
   if (!isAdmin)
     return (
       <div className="p-6 text-center">
         <p className="text-muted-foreground">This account is not an admin.</p>
-        <Button className="mt-4" variant="secondary" onClick={() => supabase.auth.signOut()}>Sign out</Button>
+        <Button className="mt-4" variant="secondary" onClick={handleSignOut}><LogOut />Sign out</Button>
       </div>
     );
-  return <Dashboard />;
+  return <Dashboard onSignOut={handleSignOut} />;
 }
 
-function Login() {
+function Login({ expired }: { expired: boolean }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [busy, setBusy] = useState(false);
@@ -73,6 +81,7 @@ function Login() {
   return (
     <form onSubmit={submit} className="mx-auto max-w-sm space-y-3 p-6">
       <h1 className="text-5xl">Admin login</h1>
+      {expired && <p role="alert" className="text-sm text-muted-foreground">Your admin session has expired. Sign in again to continue.</p>}
       <Input type="email" required placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} className="h-12" />
       <Input type="password" required placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} className="h-12" />
       <Button disabled={busy} className="h-12 w-full">{busy ? "Signing in…" : "Sign in"}</Button>
@@ -82,7 +91,7 @@ function Login() {
 
 const empty = { title: "", description: "", price: "", stock_count: "", category: "cloths" as Category };
 
-function Dashboard() {
+function Dashboard({ onSignOut }: { onSignOut: () => Promise<void> }) {
   const qc = useQueryClient();
   const { data = [] } = useQuery({ queryKey: ["products"], queryFn: fetchProducts });
   const [form, setForm] = useState(empty);
@@ -148,7 +157,7 @@ function Dashboard() {
     <div className="space-y-6 p-4">
       <div className="flex items-center justify-between">
         <h1 className="text-5xl">Inventory</h1>
-        <Button variant="secondary" onClick={() => supabase.auth.signOut()}>Sign out</Button>
+        <Button variant="secondary" onClick={onSignOut}><LogOut />Sign out</Button>
       </div>
 
       <form onSubmit={save} className="space-y-3 rounded-md border bg-card p-4">
