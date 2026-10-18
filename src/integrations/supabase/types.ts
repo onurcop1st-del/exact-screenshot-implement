@@ -14,55 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      comments: {
-        Row: {
-          body: string
-          created_at: string
-          id: string
-          parent_id: string | null
-          product_id: string
-          user_id: string
-        }
-        Insert: {
-          body: string
-          created_at?: string
-          id?: string
-          parent_id?: string | null
-          product_id: string
-          user_id: string
-        }
-        Update: {
-          body?: string
-          created_at?: string
-          id?: string
-          parent_id?: string | null
-          product_id?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "comments_parent_id_fkey"
-            columns: ["parent_id"]
-            isOneToOne: false
-            referencedRelation: "comments"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "comments_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
-            referencedRelation: "products"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "comments_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       orders: {
         Row: {
           created_at: string
@@ -119,66 +70,6 @@ export type Database = {
           title?: string
         }
         Relationships: []
-      }
-      profiles: {
-        Row: {
-          color: number
-          created_at: string
-          id: string
-          username: string
-        }
-        Insert: {
-          color?: number
-          created_at?: string
-          id: string
-          username: string
-        }
-        Update: {
-          color?: number
-          created_at?: string
-          id?: string
-          username?: string
-        }
-        Relationships: []
-      }
-      user_gets: {
-        Row: {
-          id: string
-          product_id: string
-          status: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          id?: string
-          product_id: string
-          status?: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          id?: string
-          product_id?: string
-          status?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "user_gets_product_id_fkey"
-            columns: ["product_id"]
-            isOneToOne: false
-            referencedRelation: "products"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "user_gets_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       user_roles: {
         Row: {
