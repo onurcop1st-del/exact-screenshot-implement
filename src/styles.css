@@ -43,7 +43,7 @@
   --card-foreground: oklch(0.96 0.01 100);
   --popover: oklch(0.16 0.005 100);
   --popover-foreground: oklch(0.96 0.01 100);
-  --primary: oklch(0.9 0.21 125);
+  --primary: oklch(0.83 0.13 185);
   --primary-foreground: oklch(0.13 0.005 100);
   --secondary: oklch(0.24 0.005 100);
   --secondary-foreground: oklch(0.96 0.01 100);
@@ -55,7 +55,7 @@
   --destructive-foreground: oklch(0.98 0 0);
   --border: oklch(1 0 0 / 12%);
   --input: oklch(1 0 0 / 16%);
-  --ring: oklch(0.9 0.21 125);
+  --ring: oklch(0.83 0.13 185);
   --whatsapp: oklch(0.72 0.17 150);
   --overlay: oklch(0.1 0 0 / 75%);
 }
@@ -63,7 +63,7 @@
 @layer base {
   * { border-color: var(--color-border); }
   html, body { background-color: var(--color-background); color: var(--color-foreground); font-family: var(--font-sans); }
-  h1, h2, h3, .font-display { font-family: var(--font-display); letter-spacing: 0.02em; }
+  h1, h2, h3, .font-display { font-family: var(--font-display); letter-spacing: 0; }
 }
 
 @utility feed-snap {
@@ -78,3 +78,124 @@
 @utility fade-bottom {
   background-image: linear-gradient(to top, var(--overlay) 0%, transparent 60%);
 }
+
+:root { --feed-shade: oklch(0.1 0.01 200 / 88%); --feed-ink: oklch(0.98 0 0); --avatar-ink: oklch(0.16 0 0); }
+html[data-appearance="light"] {
+ --background: oklch(0.98 0.005 185); --foreground: oklch(0.19 0.02 200);
+ --card: oklch(1 0 0); --card-foreground: var(--foreground); --popover: oklch(0.98 0.005 185); --popover-foreground: var(--foreground);
+ --primary: oklch(0.48 0.1 185); --primary-foreground: oklch(1 0 0); --muted: oklch(0.92 0.015 185); --muted-foreground: oklch(0.45 0.02 200);
+ --secondary: oklch(0.93 0.01 185); --secondary-foreground: var(--foreground); --accent: oklch(0.9 0.02 185); --accent-foreground: var(--foreground);
+ --border: oklch(0.2 0.01 200 / 15%); --input: oklch(0.2 0.01 200 / 20%);
+}
+html[data-appearance="mix"] { --background: oklch(0.12 0.01 200 / 65%); --card: oklch(0.18 0.01 200 / 75%); }
+@theme inline { --color-feed-ink: var(--feed-ink); --color-feed-shade: var(--feed-shade); }
+body { isolation: isolate; }
+.ambient-background { position: fixed; inset: 0; z-index: -1; background: oklch(0.13 0.01 200); overflow: hidden; pointer-events: none; }
+html[data-appearance="light"] .ambient-background { background: var(--background); }
+.ambient-background img { width: 100%; height: 100%; object-fit: cover; filter: blur(65px) saturate(1.8) brightness(0.65); transform: scale(1.2); }
+.product-feed { height: calc(100dvh - 204px); min-height: 260px; overflow-y: auto; scroll-snap-type: y mandatory; scrollbar-width: none; }
+.product-post { height: 100%; position: relative; scroll-snap-align: start; scroll-snap-stop: always; overflow: hidden; }
+.product-post > img { height: 100%; width: 100%; object-fit: cover; }
+.product-caption { position: absolute; inset: auto 0 0; padding: 80px 20px 24px; background: linear-gradient(transparent, var(--feed-shade)); color: var(--feed-ink); }
+.avatar-color { background: var(--avatar-color); color: var(--avatar-ink); }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+.avatar-color[data-color="0"] { --avatar-color: oklch(0.720 0.13 0.000); }
+.avatar-color[data-color="1"] { --avatar-color: oklch(0.720 0.13 137.508); }
+.avatar-color[data-color="2"] { --avatar-color: oklch(0.720 0.13 275.016); }
+.avatar-color[data-color="3"] { --avatar-color: oklch(0.720 0.13 52.524); }
+.avatar-color[data-color="4"] { --avatar-color: oklch(0.720 0.13 190.032); }
+.avatar-color[data-color="5"] { --avatar-color: oklch(0.720 0.13 327.540); }
+.avatar-color[data-color="6"] { --avatar-color: oklch(0.720 0.13 105.048); }
+.avatar-color[data-color="7"] { --avatar-color: oklch(0.720 0.13 242.556); }
+.avatar-color[data-color="8"] { --avatar-color: oklch(0.720 0.13 20.064); }
+.avatar-color[data-color="9"] { --avatar-color: oklch(0.720 0.13 157.572); }
+.avatar-color[data-color="10"] { --avatar-color: oklch(0.720 0.13 295.080); }
+.avatar-color[data-color="11"] { --avatar-color: oklch(0.720 0.13 72.588); }
+.avatar-color[data-color="12"] { --avatar-color: oklch(0.720 0.13 210.096); }
+.avatar-color[data-color="13"] { --avatar-color: oklch(0.720 0.13 347.604); }
+.avatar-color[data-color="14"] { --avatar-color: oklch(0.720 0.13 125.112); }
+.avatar-color[data-color="15"] { --avatar-color: oklch(0.720 0.13 262.620); }
+.avatar-color[data-color="16"] { --avatar-color: oklch(0.720 0.13 40.128); }
+.avatar-color[data-color="17"] { --avatar-color: oklch(0.720 0.13 177.636); }
+.avatar-color[data-color="18"] { --avatar-color: oklch(0.720 0.13 315.144); }
+.avatar-color[data-color="19"] { --avatar-color: oklch(0.720 0.13 92.652); }
+.avatar-color[data-color="20"] { --avatar-color: oklch(0.755 0.13 230.160); }
+.avatar-color[data-color="21"] { --avatar-color: oklch(0.755 0.13 7.668); }
+.avatar-color[data-color="22"] { --avatar-color: oklch(0.755 0.13 145.176); }
+.avatar-color[data-color="23"] { --avatar-color: oklch(0.755 0.13 282.684); }
+.avatar-color[data-color="24"] { --avatar-color: oklch(0.755 0.13 60.192); }
+.avatar-color[data-color="25"] { --avatar-color: oklch(0.755 0.13 197.700); }
+.avatar-color[data-color="26"] { --avatar-color: oklch(0.755 0.13 335.208); }
+.avatar-color[data-color="27"] { --avatar-color: oklch(0.755 0.13 112.716); }
+.avatar-color[data-color="28"] { --avatar-color: oklch(0.755 0.13 250.224); }
+.avatar-color[data-color="29"] { --avatar-color: oklch(0.755 0.13 27.732); }
+.avatar-color[data-color="30"] { --avatar-color: oklch(0.755 0.13 165.240); }
+.avatar-color[data-color="31"] { --avatar-color: oklch(0.755 0.13 302.748); }
+.avatar-color[data-color="32"] { --avatar-color: oklch(0.755 0.13 80.256); }
+.avatar-color[data-color="33"] { --avatar-color: oklch(0.755 0.13 217.764); }
+.avatar-color[data-color="34"] { --avatar-color: oklch(0.755 0.13 355.272); }
+.avatar-color[data-color="35"] { --avatar-color: oklch(0.755 0.13 132.780); }
+.avatar-color[data-color="36"] { --avatar-color: oklch(0.755 0.13 270.288); }
+.avatar-color[data-color="37"] { --avatar-color: oklch(0.755 0.13 47.796); }
+.avatar-color[data-color="38"] { --avatar-color: oklch(0.755 0.13 185.304); }
+.avatar-color[data-color="39"] { --avatar-color: oklch(0.755 0.13 322.812); }
+.avatar-color[data-color="40"] { --avatar-color: oklch(0.790 0.13 100.320); }
+.avatar-color[data-color="41"] { --avatar-color: oklch(0.790 0.13 237.828); }
+.avatar-color[data-color="42"] { --avatar-color: oklch(0.790 0.13 15.336); }
+.avatar-color[data-color="43"] { --avatar-color: oklch(0.790 0.13 152.844); }
+.avatar-color[data-color="44"] { --avatar-color: oklch(0.790 0.13 290.352); }
+.avatar-color[data-color="45"] { --avatar-color: oklch(0.790 0.13 67.860); }
+.avatar-color[data-color="46"] { --avatar-color: oklch(0.790 0.13 205.368); }
+.avatar-color[data-color="47"] { --avatar-color: oklch(0.790 0.13 342.876); }
+.avatar-color[data-color="48"] { --avatar-color: oklch(0.790 0.13 120.384); }
+.avatar-color[data-color="49"] { --avatar-color: oklch(0.790 0.13 257.892); }
+.avatar-color[data-color="50"] { --avatar-color: oklch(0.790 0.13 35.400); }
+.avatar-color[data-color="51"] { --avatar-color: oklch(0.790 0.13 172.908); }
+.avatar-color[data-color="52"] { --avatar-color: oklch(0.790 0.13 310.416); }
+.avatar-color[data-color="53"] { --avatar-color: oklch(0.790 0.13 87.924); }
+.avatar-color[data-color="54"] { --avatar-color: oklch(0.790 0.13 225.432); }
+.avatar-color[data-color="55"] { --avatar-color: oklch(0.790 0.13 2.940); }
+.avatar-color[data-color="56"] { --avatar-color: oklch(0.790 0.13 140.448); }
+.avatar-color[data-color="57"] { --avatar-color: oklch(0.790 0.13 277.956); }
+.avatar-color[data-color="58"] { --avatar-color: oklch(0.790 0.13 55.464); }
+.avatar-color[data-color="59"] { --avatar-color: oklch(0.790 0.13 192.972); }
+.avatar-color[data-color="60"] { --avatar-color: oklch(0.825 0.13 330.480); }
+.avatar-color[data-color="61"] { --avatar-color: oklch(0.825 0.13 107.988); }
+.avatar-color[data-color="62"] { --avatar-color: oklch(0.825 0.13 245.496); }
+.avatar-color[data-color="63"] { --avatar-color: oklch(0.825 0.13 23.004); }
+.avatar-color[data-color="64"] { --avatar-color: oklch(0.825 0.13 160.512); }
+.avatar-color[data-color="65"] { --avatar-color: oklch(0.825 0.13 298.020); }
+.avatar-color[data-color="66"] { --avatar-color: oklch(0.825 0.13 75.528); }
+.avatar-color[data-color="67"] { --avatar-color: oklch(0.825 0.13 213.036); }
+.avatar-color[data-color="68"] { --avatar-color: oklch(0.825 0.13 350.544); }
+.avatar-color[data-color="69"] { --avatar-color: oklch(0.825 0.13 128.052); }
+.avatar-color[data-color="70"] { --avatar-color: oklch(0.825 0.13 265.560); }
+.avatar-color[data-color="71"] { --avatar-color: oklch(0.825 0.13 43.068); }
+.avatar-color[data-color="72"] { --avatar-color: oklch(0.825 0.13 180.576); }
+.avatar-color[data-color="73"] { --avatar-color: oklch(0.825 0.13 318.084); }
+.avatar-color[data-color="74"] { --avatar-color: oklch(0.825 0.13 95.592); }
+.avatar-color[data-color="75"] { --avatar-color: oklch(0.825 0.13 233.100); }
+.avatar-color[data-color="76"] { --avatar-color: oklch(0.825 0.13 10.608); }
+.avatar-color[data-color="77"] { --avatar-color: oklch(0.825 0.13 148.116); }
+.avatar-color[data-color="78"] { --avatar-color: oklch(0.825 0.13 285.624); }
+.avatar-color[data-color="79"] { --avatar-color: oklch(0.825 0.13 63.132); }
+.avatar-color[data-color="80"] { --avatar-color: oklch(0.860 0.13 200.640); }
+.avatar-color[data-color="81"] { --avatar-color: oklch(0.860 0.13 338.148); }
+.avatar-color[data-color="82"] { --avatar-color: oklch(0.860 0.13 115.656); }
+.avatar-color[data-color="83"] { --avatar-color: oklch(0.860 0.13 253.164); }
+.avatar-color[data-color="84"] { --avatar-color: oklch(0.860 0.13 30.672); }
+.avatar-color[data-color="85"] { --avatar-color: oklch(0.860 0.13 168.180); }
+.avatar-color[data-color="86"] { --avatar-color: oklch(0.860 0.13 305.688); }
+.avatar-color[data-color="87"] { --avatar-color: oklch(0.860 0.13 83.196); }
+.avatar-color[data-color="88"] { --avatar-color: oklch(0.860 0.13 220.704); }
+.avatar-color[data-color="89"] { --avatar-color: oklch(0.860 0.13 358.212); }
+.avatar-color[data-color="90"] { --avatar-color: oklch(0.860 0.13 135.720); }
+.avatar-color[data-color="91"] { --avatar-color: oklch(0.860 0.13 273.228); }
+.avatar-color[data-color="92"] { --avatar-color: oklch(0.860 0.13 50.736); }
+.avatar-color[data-color="93"] { --avatar-color: oklch(0.860 0.13 188.244); }
+.avatar-color[data-color="94"] { --avatar-color: oklch(0.860 0.13 325.752); }
+.avatar-color[data-color="95"] { --avatar-color: oklch(0.860 0.13 103.260); }
+.avatar-color[data-color="96"] { --avatar-color: oklch(0.860 0.13 240.768); }
+.avatar-color[data-color="97"] { --avatar-color: oklch(0.860 0.13 18.276); }
+.avatar-color[data-color="98"] { --avatar-color: oklch(0.860 0.13 155.784); }
+.avatar-color[data-color="99"] { --avatar-color: oklch(0.860 0.13 293.292); }
