@@ -1,6 +1,8 @@
 # Roadmap
 
 ## Open
+- Requested: restore TikTok-style product scrolling and redesign colours with Dark, Light and default product-image-blurred Mix mode.
+- Requested: product comments and replies; email/password shopper signup without confirmation codes; usernames and initial avatars with 100 colours; profile tab and personal GET history. Blocked on confirming a user-owned backend is connected; do not enable Cloud shopper Auth against the user's preference.
 - Done: secure admin sign-out and expired-session handling; unit tests passed, owner inventory/sign-out/reload verified in browser.
 - External Supabase migration: blocked on a new Lovable project connected to the user's external Supabase; no supported in-place switch. Keep existing Cloud data intact until transfer is verified.
 - Done: single admin login created and verified end to end — 1 account only (onurcop1st@gmail.com), confirmed, admin role, password sign-in works on /admin, public sign-up rejected ("signup_disabled").
