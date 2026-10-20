@@ -15,6 +15,8 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { CartProvider } from "@/lib/cart";
 import { SiteHeader, BottomNav } from "@/components/SiteHeader";
 import { Toaster } from "@/components/ui/sonner";
+import { AppearanceProvider } from "@/lib/appearance";
+import { ShopperProvider } from "@/lib/shopper";
 
 function NotFoundComponent() {
   return (
@@ -122,14 +124,14 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <CartProvider>
+      <AppearanceProvider><ShopperProvider><CartProvider>
         <div className="mx-auto min-h-dvh max-w-md pb-14">
           <SiteHeader />
           <Outlet />
         </div>
         <BottomNav />
         <Toaster position="top-center" />
-      </CartProvider>
+      </CartProvider></ShopperProvider></AppearanceProvider>
     </QueryClientProvider>
   );
 }
