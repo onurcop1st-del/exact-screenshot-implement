@@ -13,7 +13,7 @@ export function AppearanceProvider({ children }: { children: ReactNode }) {
     setReady(true);
   }, []);
   useEffect(() => {
-    document.documentElement.dataset.appearance = mode;
+    document.documentElement.dataset['appearance'] = mode;
     if (ready) localStorage.setItem('onur-appearance', mode);
   }, [mode, ready]);
   return <Context.Provider value={{ mode, setMode, setImage }}>
