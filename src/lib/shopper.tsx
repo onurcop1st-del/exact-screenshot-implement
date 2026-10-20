@@ -16,7 +16,10 @@ export function ShopperProvider({ children }: { children: ReactNode }) {
     const { data } = supabase.auth.onAuthStateChange((_event, session) => {
       if (!active) return;
       setUser(session?.user ?? null); setReady(true);
-      if (!session) { void qc.cancelQueries().then(() => qc.removeQueries({ predicate: q => ['profile','get-history'].includes(String(q.queryKey[0])) })); }
+      if (!session) {
+        const privateQueries = { predicate: (q: { queryKey: readonly unknown[] }) => ['profile','get-history'].includes(String(q.queryKey[0])) };
+        void qc.cancelQueries(privateQueries).then(() => qc.removeQueries(privateQueries));
+      }
     });
     void supabase.auth.getUser().then(({ data }) => { if (active) { setUser(data.user); setReady(true); } });
     return () => { active = false; data.subscription.unsubscribe(); };
