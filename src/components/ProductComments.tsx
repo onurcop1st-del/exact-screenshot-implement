@@ -10,6 +10,21 @@ import { supabase } from '@/integrations/supabase/client';
 import { useShopper, InitialAvatar } from '@/lib/shopper';
 import { commentSchema } from '@/lib/shopper-rules';
 
+export function useCommentCount(productId: string) {
+  const { data = 0 } = useQuery({
+    queryKey: ['comment-count', productId],
+    queryFn: async () => {
+      const { count, error } = await supabase
+        .from('comments')
+        .select('id', { count: 'exact', head: true })
+        .eq('product_id', productId);
+      if (error) throw error;
+      return count ?? 0;
+    },
+  });
+  return data;
+}
+
 export function ProductComments({ productId, title, open, onClose }: { productId: string; title: string; open: boolean; onClose: () => void }) {
   const { user } = useShopper();
   const qc = useQueryClient();
@@ -20,6 +35,12 @@ export function ProductComments({ productId, title, open, onClose }: { productId
     const { data, error } = await supabase.from('comments').select('*, profiles(username,color)').eq('product_id', productId).order('created_at');
     if (error) throw error; return data;
   }});
+  async function refresh() {
+    await Promise.all([
+      qc.invalidateQueries({ queryKey: ['comments', productId] }),
+      qc.invalidateQueries({ queryKey: ['comment-count', productId] }),
+    ]);
+  }
   async function send() {
     if (!user) return;
     const parsed = commentSchema.safeParse(body);
@@ -28,12 +49,12 @@ export function ProductComments({ productId, title, open, onClose }: { productId
     const { error } = await supabase.from('comments').insert({ product_id: productId, user_id: user.id, parent_id: reply?.id ?? null, body: parsed.data });
     setBusy(false);
     if (error) { toast.error('Could not post your comment. Please try again.'); return; }
-    setBody(''); setReply(null); await qc.invalidateQueries({ queryKey: ['comments', productId] });
+    setBody(''); setReply(null); await refresh();
   }
   async function remove(id: string) {
     const { error } = await supabase.from('comments').delete().eq('id', id);
     if (error) toast.error('Could not delete comment');
-    else await qc.invalidateQueries({ queryKey: ['comments', productId] });
+    else await refresh();
   }
   function renderComment(c: typeof data[number], depth = 0): React.ReactNode {
     return <div key={c.id} className={`space-y-3 ${depth ? 'ml-5 border-l pl-3' : ''}`}>

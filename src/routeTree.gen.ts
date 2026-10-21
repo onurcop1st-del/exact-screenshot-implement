@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as GetRouteImport } from './routes/get'
 import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as ProductCodeRouteImport } from './routes/product.$code'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -34,18 +35,25 @@ const ProfileRoute = ProfileRouteImport.update({
   path: '/profile',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProductCodeRoute = ProductCodeRouteImport.update({
+  id: '/product/$code',
+  path: '/product/$code',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/get': typeof GetRoute
   '/profile': typeof ProfileRoute
+  '/product/$code': typeof ProductCodeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/get': typeof GetRoute
   '/profile': typeof ProfileRoute
+  '/product/$code': typeof ProductCodeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -53,13 +61,14 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/get': typeof GetRoute
   '/profile': typeof ProfileRoute
+  '/product/$code': typeof ProductCodeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/admin' | '/get' | '/profile'
+  fullPaths: '/' | '/admin' | '/get' | '/profile' | '/product/$code'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/admin' | '/get' | '/profile'
-  id: '__root__' | '/' | '/admin' | '/get' | '/profile'
+  to: '/' | '/admin' | '/get' | '/profile' | '/product/$code'
+  id: '__root__' | '/' | '/admin' | '/get' | '/profile' | '/product/$code'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -67,6 +76,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   GetRoute: typeof GetRoute
   ProfileRoute: typeof ProfileRoute
+  ProductCodeRoute: typeof ProductCodeRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -99,6 +109,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/product/$code': {
+      id: '/product/$code'
+      path: '/product/$code'
+      fullPath: '/product/$code'
+      preLoaderRoute: typeof ProductCodeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -107,6 +124,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   GetRoute: GetRoute,
   ProfileRoute: ProfileRoute,
+  ProductCodeRoute: ProductCodeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

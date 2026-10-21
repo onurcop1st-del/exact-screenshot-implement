@@ -13,3 +13,5 @@
 - Shopper identity and private profile/history reads belong in `ShopperProvider`; keep its state identity-scoped and database RLS authoritative so shopper accounts never imply admin access.
 - Appearance is controlled by `AppearanceProvider` and semantic global CSS tokens; derive Mix imagery from the visible product and keep avatar palette definitions in CSS for consistent theming.
 - Product replies use the comments parent relation with database validation that parent and reply share a product; keep GET history owner-only and treat “got” as shopper-reported, not payment confirmation.
+- Home is a free-scroll two-column grid; the full-screen snap-scroll feed lives only on the product detail route, entered by tapping a product and exited with its back button — never reintroduce snap scrolling on the home grid.
+- Admin product photos upload as the original file with no resizing or recompression, and the form shows a local preview of the selected file before saving.
