@@ -96,9 +96,17 @@ function Dashboard({ onSignOut }: { onSignOut: () => Promise<void> }) {
   const { data = [] } = useQuery({ queryKey: ["products"], queryFn: fetchProducts });
   const [form, setForm] = useState(empty);
   const [file, setFile] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
   const [editing, setEditing] = useState<Product | null>(null);
   const [busy, setBusy] = useState(false);
   const refresh = () => qc.invalidateQueries({ queryKey: ["products"] });
+
+  useEffect(() => {
+    if (!file) { setPreview(null); return; }
+    const url = URL.createObjectURL(file);
+    setPreview(url);
+    return () => URL.revokeObjectURL(url);
+  }, [file]);
 
   function startEdit(p: Product) {
     setEditing(p);
@@ -113,8 +121,9 @@ function Dashboard({ onSignOut }: { onSignOut: () => Promise<void> }) {
     try {
       let image_path = editing?.image_path ?? null;
       if (file) {
+        // Upload the original file untouched — no resizing or recompression.
         const path = `${crypto.randomUUID()}-${file.name.replace(/[^\w.]/g, "")}`;
-        const { error } = await supabase.storage.from("products").upload(path, file);
+        const { error } = await supabase.storage.from("products").upload(path, file, { contentType: file.type || undefined });
         if (error) throw error;
         image_path = path;
       }
@@ -176,10 +185,22 @@ function Dashboard({ onSignOut }: { onSignOut: () => Promise<void> }) {
           <Input required type="number" min="0" placeholder="Price (₦)" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} />
           <Input required type="number" min="0" placeholder="Stock" value={form.stock_count} onChange={(e) => setForm({ ...form, stock_count: e.target.value })} />
         </div>
-        <Input type="file" accept="image/*" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
+        <Input type="file" accept="image/*" aria-label="Product photo" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
+        {preview && (
+          <div className="space-y-1">
+            <img src={preview} alt="Selected product photo preview" className="max-h-64 w-full rounded-sm object-contain bg-muted" />
+            <p className="text-xs text-muted-foreground">{file?.name} — uploaded at full quality, no compression.</p>
+          </div>
+        )}
+        {!preview && editing?.image && (
+          <div className="space-y-1">
+            <img src={editing.image} alt={`Current photo of ${editing.title}`} className="max-h-64 w-full rounded-sm object-contain bg-muted" />
+            <p className="text-xs text-muted-foreground">Current photo — choose a file to replace it.</p>
+          </div>
+        )}
         <div className="flex gap-2">
           <Button disabled={busy} className="flex-1">{busy ? "Saving…" : editing ? "Save changes" : "Upload"}</Button>
-          {editing && <Button type="button" variant="secondary" onClick={() => { setEditing(null); setForm(empty); }}>Cancel</Button>}
+          {editing && <Button type="button" variant="secondary" onClick={() => { setEditing(null); setForm(empty); setFile(null); }}>Cancel</Button>}
         </div>
       </form>
 
