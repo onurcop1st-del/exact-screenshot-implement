@@ -123,7 +123,7 @@ function Dashboard({ onSignOut }: { onSignOut: () => Promise<void> }) {
       if (file) {
         // Upload the original file untouched — no resizing or recompression.
         const path = `${crypto.randomUUID()}-${file.name.replace(/[^\w.]/g, "")}`;
-        const { error } = await supabase.storage.from("products").upload(path, file, { contentType: file.type || undefined });
+        const { error } = await supabase.storage.from("products").upload(path, file, file.type ? { contentType: file.type } : undefined);
         if (error) throw error;
         image_path = path;
       }
