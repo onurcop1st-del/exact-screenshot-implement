@@ -12,7 +12,6 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as GetRouteImport } from './routes/get'
-import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as ProductCodeRouteImport } from './routes/product.$code'
 
 const IndexRoute = IndexRouteImport.update({
@@ -30,11 +29,6 @@ const GetRoute = GetRouteImport.update({
   path: '/get',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ProfileRoute = ProfileRouteImport.update({
-  id: '/profile',
-  path: '/profile',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ProductCodeRoute = ProductCodeRouteImport.update({
   id: '/product/$code',
   path: '/product/$code',
@@ -45,14 +39,12 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/get': typeof GetRoute
-  '/profile': typeof ProfileRoute
   '/product/$code': typeof ProductCodeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/get': typeof GetRoute
-  '/profile': typeof ProfileRoute
   '/product/$code': typeof ProductCodeRoute
 }
 export interface FileRoutesById {
@@ -60,22 +52,20 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/get': typeof GetRoute
-  '/profile': typeof ProfileRoute
   '/product/$code': typeof ProductCodeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/admin' | '/get' | '/profile' | '/product/$code'
+  fullPaths: '/' | '/admin' | '/get' | '/product/$code'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/admin' | '/get' | '/profile' | '/product/$code'
-  id: '__root__' | '/' | '/admin' | '/get' | '/profile' | '/product/$code'
+  to: '/' | '/admin' | '/get' | '/product/$code'
+  id: '__root__' | '/' | '/admin' | '/get' | '/product/$code'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
   GetRoute: typeof GetRoute
-  ProfileRoute: typeof ProfileRoute
   ProductCodeRoute: typeof ProductCodeRoute
 }
 
@@ -102,13 +92,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GetRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/profile': {
-      id: '/profile'
-      path: '/profile'
-      fullPath: '/profile'
-      preLoaderRoute: typeof ProfileRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/product/$code': {
       id: '/product/$code'
       path: '/product/$code'
@@ -123,7 +106,6 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
   GetRoute: GetRoute,
-  ProfileRoute: ProfileRoute,
   ProductCodeRoute: ProductCodeRoute,
 }
 export const routeTree = rootRouteImport

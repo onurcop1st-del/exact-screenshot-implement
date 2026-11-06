@@ -1,10 +1,9 @@
 import { Link } from "@tanstack/react-router";
-import { MoreVertical, ShoppingBag, Store, Lock, UserRound } from "lucide-react";
+import { MoreVertical, ShoppingBag, Store, Lock } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger, SheetClose } from "@/components/ui/sheet";
 import { useCart } from "@/lib/cart";
 import { TIKTOK_URL, WHATSAPP_NUMBER } from "@/lib/shop";
 import { Button } from "@/components/ui/button";
-import { useShopper, InitialAvatar } from "@/lib/shopper";
 
 export function TikTokIcon({ className }: { className?: string }) {
   return (
@@ -24,10 +23,10 @@ export function WhatsAppIcon({ className }: { className?: string }) {
 export function SiteHeader() {
   const { count } = useCart();
   return (
-    <header className="sticky top-0 z-40 flex h-14 items-center justify-between border-b bg-background/90 px-4 backdrop-blur">
+    <header className="sticky top-0 z-40 flex h-14 items-center justify-between bg-header px-4">
       <Link to="/" className="flex min-w-0 items-baseline gap-2">
-        <span className="font-display text-3xl">ONUR</span>
-        <span className="max-w-36 text-[10px] uppercase text-primary">Stitched for the streets</span>
+        <span className="font-display text-3xl text-primary">ONUR</span>
+        <span className="max-w-36 text-[10px] uppercase text-muted-foreground">Stitched for the streets</span>
       </Link>
       <div className="flex items-center gap-1">
         <Link to="/get" aria-label="Open GET list" className="relative p-2">
@@ -115,19 +114,18 @@ export function SiteHeader() {
 
 export function BottomNav() {
   const { count } = useCart();
-  const { profile } = useShopper();
-  const cls = "flex h-14 flex-1 items-center justify-center gap-2 font-display text-xl";
+  const cls = "flex h-14 flex-1 items-center justify-center gap-2 text-xs font-medium flex-col !gap-0.5";
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-40 mx-auto flex max-w-md border-t bg-background/95 backdrop-blur">
+    <nav className="fixed inset-x-0 bottom-0 z-40 mx-auto flex max-w-md border-t bg-header">
       <Link to="/" className={cls} activeProps={{ className: "text-primary" }} activeOptions={{ exact: true }}>
         <Store className="h-5 w-5" /> Shop
       </Link>
       <Link to="/get" className={cls} activeProps={{ className: "text-primary" }}>
         <ShoppingBag className="h-5 w-5" /> GET {count > 0 && `(${count})`}
       </Link>
-      <Link to="/profile" aria-label="Profile" className={cls} activeProps={{ className: "text-primary" }}>
-        {profile ? <InitialAvatar username={profile.username} color={profile.color} /> : <><UserRound className="h-5 w-5" />Profile</>}
-      </Link>
+      <a href={`https://wa.me/${WHATSAPP_NUMBER}`} target="_blank" rel="noreferrer" className={cls}>
+        <WhatsAppIcon className="h-5 w-5" /> Help
+      </a>
     </nav>
   );
 }

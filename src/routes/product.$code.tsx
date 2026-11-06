@@ -1,14 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
-import { ArrowLeft, MessageCircle, ShoppingBag } from "lucide-react";
+import { ArrowLeft, ShoppingBag } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { fetchProducts, naira, type Product } from "@/lib/shop";
 import { useCart } from "@/lib/cart";
 import { useAppearance } from "@/lib/appearance";
-import { useShopper } from "@/lib/shopper";
-import { ProductComments, useCommentCount } from "@/components/ProductComments";
 
 export const Route = createFileRoute("/product/$code")({
   head: () => ({
@@ -76,11 +74,8 @@ function ProductPage() {
 
 function FeedPost({ p, eager }: { p: Product; eager: boolean }) {
   const { add } = useCart();
-  const { recordGet } = useShopper();
   const { setImage } = useAppearance();
   const post = useRef<HTMLElement>(null);
-  const [comments, setComments] = useState(false);
-  const commentCount = useCommentCount(p.id);
   useEffect(() => {
     if (!post.current) return;
     const observer = new IntersectionObserver(entries => {
@@ -108,19 +103,14 @@ function FeedPost({ p, eager }: { p: Product; eager: boolean }) {
             disabled={out}
             onClick={() => {
               add({ id: p.id, code: p.code, title: p.title, price: Number(p.price) });
-              void recordGet(p.id).catch(() => toast.error('Added to GET, but history could not be saved.'));
               toast.success(`${p.title} added to GET`);
             }}
             className="h-12 flex-1 font-display text-2xl"
           >
             <ShoppingBag /> GET
           </Button>
-          <Button variant="secondary" className="h-12 gap-1.5" aria-label={`Comments on ${p.title}`} onClick={() => setComments(true)}>
-            <MessageCircle />{commentCount > 0 && <span className="text-sm font-semibold">{commentCount}</span>}
-          </Button>
         </div>
       </div>
-      <ProductComments productId={p.id} title={p.title} open={comments} onClose={() => setComments(false)} />
     </article>
   );
 }
