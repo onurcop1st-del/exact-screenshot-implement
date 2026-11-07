@@ -31,6 +31,27 @@ const byCode: Record<string, string> = { HOD001: hoodie, JOG001: hoodie };
 
 export const naira = (n: number) => "₦" + Number(n).toLocaleString("en-NG");
 
+function sessionSeed(): number {
+  if (typeof window === "undefined") return 1;
+  const key = "onur-shuffle-seed";
+  let s = Number(sessionStorage.getItem(key));
+  if (!s) {
+    s = Math.floor(Math.random() * 2 ** 31) + 1;
+    sessionStorage.setItem(key, String(s));
+  }
+  return s;
+}
+
+/** Same random order for the whole visit; a new visit gets a new order. */
+export function shuffleForSession<T extends { id: string }>(items: T[], seed = sessionSeed()): T[] {
+  const score = (id: string) => {
+    let h = seed;
+    for (let i = 0; i < id.length; i++) h = Math.imul(h ^ id.charCodeAt(i), 2654435761) >>> 0;
+    return h;
+  };
+  return [...items].sort((a, b) => score(a.id) - score(b.id));
+}
+
 export async function fetchProducts(): Promise<Product[]> {
   const { data, error } = await supabase
     .from("products")
@@ -47,7 +68,7 @@ export async function fetchProducts(): Promise<Product[]> {
       if (s.path && s.signedUrl) urls[s.path] = s.signedUrl;
     });
   }
-  return data.map((p) => ({
+  return shuffleForSession(data).map((p) => ({
     ...p,
     category: p.category as Category,
     image:
