@@ -31,18 +31,13 @@ const byCode: Record<string, string> = { HOD001: hoodie, JOG001: hoodie };
 
 export const naira = (n: number) => "₦" + Number(n).toLocaleString("en-NG");
 
+// New random seed on every page load (visit or reload); stable while the page stays open.
+const PAGE_SEED = Math.floor(Math.random() * 2 ** 31) + 1;
 function sessionSeed(): number {
-  if (typeof window === "undefined") return 1;
-  const key = "onur-shuffle-seed";
-  let s = Number(sessionStorage.getItem(key));
-  if (!s) {
-    s = Math.floor(Math.random() * 2 ** 31) + 1;
-    sessionStorage.setItem(key, String(s));
-  }
-  return s;
+  return PAGE_SEED;
 }
 
-/** Same random order for the whole visit; a new visit gets a new order. */
+/** New random order on every visit or reload; stable while browsing. */
 export function shuffleForSession<T extends { id: string }>(items: T[], seed = sessionSeed()): T[] {
   const score = (id: string) => {
     let h = seed;
