@@ -8,7 +8,7 @@ import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
 // Render sets RENDER=true during builds: produce a Node server (.output/server/index.mjs)
 // there, so the Render Web Service works even if NITRO_PRESET was not set.
-const onRender = Boolean(process.env.RENDER) && !process.env.LOVABLE_SANDBOX;
+const onRender = Boolean(process.env["RENDER"]) && !process.env["LOVABLE_SANDBOX"];
 
 export default defineConfig({
   tanstackStart: {
