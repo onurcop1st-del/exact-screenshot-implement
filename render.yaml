@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: onur-shop
+    runtime: node
+    plan: free
+    buildCommand: npm install -g bun@1.4.4 && bun install --frozen-lockfile && NITRO_PRESET=node-server bun run build
+    startCommand: node .output/server/index.mjs
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: NITRO_PRESET
+        value: node-server
+      - key: NITRO_HOST
+        value: 0.0.0.0
