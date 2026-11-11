@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useCart, type CartItem } from "@/lib/cart";
+import { StyleHelper } from "@/components/StyleHelper";
 import { CATEGORIES, fetchProducts, isOrderCode, naira, type Category, type Product } from "@/lib/shop";
 
 export const Route = createFileRoute("/")({
@@ -75,6 +76,8 @@ function Home() {
         <span className="flex flex-col items-center gap-1 rounded-md bg-card p-2"><ShieldCheck className="h-4 w-4 text-primary" />Hand-stitched</span>
         <span className="flex flex-col items-center gap-1 rounded-md bg-card p-2"><MessageCircle className="h-4 w-4 text-primary" />WhatsApp orders</span>
       </div>
+
+      {!term && data.length > 0 && <StyleHelper products={data} />}
 
       {!term && (
         <div className="mx-2 mt-2 flex gap-2 overflow-x-auto rounded-md bg-card p-2">

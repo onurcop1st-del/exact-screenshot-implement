@@ -1,0 +1,12 @@
+{
+  "name": "ONUR Streetwear",
+  "short_name": "ONUR",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#f68b1e",
+  "icons": [
+    { "src": "/android-icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/android-icon-300.png", "sizes": "300x300", "type": "image/png" }
+  ]
+}

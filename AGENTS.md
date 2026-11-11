@@ -15,3 +15,4 @@
 - Product replies use the comments parent relation with database validation that parent and reply share a product; keep GET history owner-only and treat “got” as shopper-reported, not payment confirmation.
 - Home is a free-scroll two-column grid; the full-screen snap-scroll feed lives only on the product detail route, entered by tapping a product and exited with its back button — never reintroduce snap scrolling on the home grid.
 - Admin product photos upload as the original file with no resizing or recompression, and the form shows a local preview of the selected file before saving.
+- AI product recommendations run in a server function (src/lib/recommend.functions.ts) via the AI Gateway SDK; results are filtered to codes that exist in the catalog so the model cannot invent products.
