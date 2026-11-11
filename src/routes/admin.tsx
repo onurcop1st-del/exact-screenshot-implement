@@ -2,7 +2,9 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState, type FormEvent } from "react";
 import { toast } from "sonner";
-import { LogOut } from "lucide-react";
+import { LogOut, Sparkles } from "lucide-react";
+import { useServerFn } from "@tanstack/react-start";
+import { writeDescription } from "@/lib/describe.functions";
 import { useAdminSession } from "@/hooks/use-admin-session";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -150,6 +152,9 @@ function Dashboard({ onSignOut }: { onSignOut: () => Promise<void> }) {
     setBusy(false);
   }
 
+  const describeFn = useServerFn(writeDescription);
+  const [writing, setWriting] = useState(false);
+
   async function setStock(p: Product, n: number) {
     await supabase.from("products").update({ stock_count: Math.max(0, n) }).eq("id", p.id);
     refresh();
@@ -180,7 +185,19 @@ function Dashboard({ onSignOut }: { onSignOut: () => Promise<void> }) {
           ))}
         </div>
         <Input required placeholder="Title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
-        <Textarea placeholder="Description" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
+        <div className="flex items-center justify-between gap-2">
+          <span className="text-sm text-muted-foreground">Description (you can edit it)</span>
+          <Button type="button" size="sm" variant="secondary" disabled={writing || form.title.trim().length < 2}
+            onClick={async () => {
+              setWriting(true);
+              const r = await describeFn({ data: { title: form.title, category: form.category, notes: form.description.slice(0, 400) || undefined } });
+              setWriting(false);
+              if (r.error) toast.error(r.error); else setForm((f) => ({ ...f, description: r.text }));
+            }}>
+            <Sparkles />{writing ? "Writing…" : "Write with AI"}
+          </Button>
+        </div>
+        <Textarea rows={8} placeholder="Description" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
         <div className="flex gap-2">
           <Input required type="number" min="0" placeholder="Price (₦)" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} />
           <Input required type="number" min="0" placeholder="Stock" value={form.stock_count} onChange={(e) => setForm({ ...form, stock_count: e.target.value })} />

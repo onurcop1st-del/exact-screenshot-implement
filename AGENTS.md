@@ -16,3 +16,5 @@
 - Home is a free-scroll two-column grid; the full-screen snap-scroll feed lives only on the product detail route, entered by tapping a product and exited with its back button — never reintroduce snap scrolling on the home grid.
 - Admin product photos upload as the original file with no resizing or recompression, and the form shows a local preview of the selected file before saving.
 - AI product recommendations run in a server function (src/lib/recommend.functions.ts) via the AI Gateway SDK; results are filtered to codes that exist in the catalog so the model cannot invent products.
+
+- Product detail route is a Jumia-style single product page (details, specs, related, small how-to-order note); AI description drafting is an admin-only server fn (src/lib/describe.functions.ts) whose output fills an editable textarea — why: owner reviews AI text before saving.
