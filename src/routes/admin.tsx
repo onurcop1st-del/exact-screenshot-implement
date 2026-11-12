@@ -221,14 +221,15 @@ function Dashboard({ onSignOut }: { onSignOut: () => Promise<void> }) {
         </div>
       </form>
 
+      <p className="text-sm text-muted-foreground">Newest uploads first</p>
       <ul className="space-y-2">
-        {data.map((p) => (
+        {[...data].sort((a, b) => b.created_at.localeCompare(a.created_at)).map((p) => (
           <li key={p.id} className="flex gap-3 rounded-md border bg-card p-3">
             <img src={p.image} alt={p.title} loading="lazy" className="h-20 w-16 rounded-sm object-cover" />
             <div className="flex-1 space-y-1">
               <div className="font-semibold">{p.title} <span className="text-xs text-muted-foreground">{p.code}</span></div>
               <div className="text-xs text-muted-foreground">
-                {p.category} · {naira(p.price)} · {new Date(p.created_at).toLocaleDateString()}
+                {p.category} · {naira(p.price)} · uploaded {new Date(p.created_at).toLocaleString("en-NG", { dateStyle: "medium", timeStyle: "short" })}
               </div>
               <div className="flex items-center gap-2">
                 <Button size="sm" variant="secondary" onClick={() => setStock(p, p.stock_count - 1)}>-</Button>

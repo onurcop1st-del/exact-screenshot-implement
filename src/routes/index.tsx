@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { RefreshCw } from "lucide-react";
 import { Search, Shirt, GraduationCap, Gem, ShoppingBag, LayoutGrid, Truck, ShieldCheck, MessageCircle } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
@@ -32,6 +33,39 @@ function Home() {
   const { data = [], isLoading, isError, refetch } = useQuery({ queryKey: ["products"], queryFn: fetchProducts });
   const { replace } = useCart();
   const navigate = useNavigate();
+  const [pull, setPull] = useState(0);
+  const [refreshing, setRefreshing] = useState(false);
+  const startY = useRef<number | null>(null);
+
+  useEffect(() => {
+    async function doRefresh() {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      setRefreshing(true);
+      await refetch();
+      setRefreshing(false);
+    }
+    const onTap = () => void doRefresh();
+    const down = (e: TouchEvent) => { startY.current = window.scrollY <= 0 ? e.touches[0]?.clientY ?? null : null; };
+    const move = (e: TouchEvent) => {
+      if (startY.current == null) return;
+      const d = (e.touches[0]?.clientY ?? 0) - startY.current;
+      setPull(d > 0 ? Math.min(100, d / 2) : 0);
+    };
+    const up = () => {
+      setPull((d) => { if (d >= 60) void doRefresh(); return 0; });
+      startY.current = null;
+    };
+    window.addEventListener("onur:refresh", onTap);
+    window.addEventListener("touchstart", down, { passive: true });
+    window.addEventListener("touchmove", move, { passive: true });
+    window.addEventListener("touchend", up);
+    return () => {
+      window.removeEventListener("onur:refresh", onTap);
+      window.removeEventListener("touchstart", down);
+      window.removeEventListener("touchmove", move);
+      window.removeEventListener("touchend", up);
+    };
+  }, [refetch]);
 
   const term = q.trim().toLowerCase();
   const list = data.filter(
@@ -53,6 +87,11 @@ function Home() {
 
   return (
     <div className="pb-4">
+      {(pull > 0 || refreshing) && (
+        <div className="flex justify-center overflow-hidden text-primary" style={{ height: refreshing ? 40 : pull }} role="status" aria-label={refreshing ? "Refreshing" : "Pull to refresh"}>
+          <RefreshCw className={`mt-2 h-6 w-6 ${refreshing ? "animate-spin" : ""}`} style={refreshing ? undefined : { transform: `rotate(${pull * 3}deg)` }} />
+        </div>
+      )}
       <div className="sticky top-14 z-30 bg-header px-3 pb-2 shadow-sm">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />

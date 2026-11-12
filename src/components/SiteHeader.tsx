@@ -117,7 +117,8 @@ export function BottomNav() {
   const cls = "flex h-14 flex-1 items-center justify-center gap-2 text-xs font-medium flex-col !gap-0.5";
   return (
     <nav className="fixed inset-x-0 bottom-0 z-40 mx-auto flex max-w-md border-t bg-header">
-      <Link to="/" className={cls} activeProps={{ className: "text-primary" }} activeOptions={{ exact: true }}>
+      <Link to="/" className={cls} activeProps={{ className: "text-primary" }} activeOptions={{ exact: true }}
+        onClick={() => { if (window.location.pathname === "/") window.dispatchEvent(new Event("onur:refresh")); }}>
         <Store className="h-5 w-5" /> Shop
       </Link>
       <Link to="/get" className={cls} activeProps={{ className: "text-primary" }}>
