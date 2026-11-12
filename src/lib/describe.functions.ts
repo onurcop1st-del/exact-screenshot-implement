@@ -7,6 +7,7 @@ const input = z.object({
   title: z.string().trim().min(2).max(120),
   category: z.string().max(30),
   notes: z.string().max(400).optional(),
+  image: z.string().max(3_000_000).optional(),
 });
 
 export const writeDescription = createServerFn({ method: "POST" })
@@ -19,8 +20,11 @@ export const writeDescription = createServerFn({ method: "POST" })
       const res = await generateResponse({
         model: "openai/gpt-6-astra",
         instructions:
-          "You write product descriptions for ONUR, a Nigerian streetwear brand. Write 2 short paragraphs (about 70-110 words total): the vibe and look, then fit, feel and how to style it. Then a line 'Key features:' followed by 3-4 bullet lines starting with '• '. Plain text only, no markdown, no prices, no invented exact materials unless given.",
-        input: `Product: ${data.title}\nCategory: ${data.category}\n${data.notes ? `Owner notes: ${data.notes}` : ""}`,
+          "You write product descriptions for ONUR, a Nigerian streetwear brand. Write 2 short paragraphs (about 70-110 words total): the vibe and look, then fit, feel and how to style it. Then a line 'Key features:' followed by 3-4 bullet lines starting with '• '. Plain text only, no markdown, no prices. If a photo is given, describe exactly what is visible in it: colours, prints, logos, shape, texture and style.",
+        input: [{ role: "user", content: [
+          { type: "input_text", text: `Product: ${data.title}\nCategory: ${data.category}\n${data.notes ? `Owner notes: ${data.notes}` : ""}` },
+          ...(data.image ? [{ type: "input_image" as const, image_url: data.image, detail: "auto" as const }] : []),
+        ] }],
       });
       const text = extractText(res).trim();
       return text ? { text, error: null } : { text: "", error: "No description came back. Try again." };

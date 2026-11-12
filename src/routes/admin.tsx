@@ -91,6 +91,23 @@ function Login({ expired }: { expired: boolean }) {
   );
 }
 
+// Small copy of the photo only for the AI to look at; the real upload stays full quality.
+async function aiImage(file: File | null, url?: string): Promise<string | undefined> {
+  try {
+    const src = file ? URL.createObjectURL(file) : url;
+    if (!src) return undefined;
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    await new Promise((ok, bad) => { img.onload = ok; img.onerror = bad; img.src = src; });
+    const k = Math.min(1, 768 / Math.max(img.width, img.height));
+    const c = document.createElement("canvas");
+    c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+    c.getContext("2d")?.drawImage(img, 0, 0, c.width, c.height);
+    if (file) URL.revokeObjectURL(src);
+    return c.toDataURL("image/jpeg", 0.85);
+  } catch { return undefined; }
+}
+
 const empty = { title: "", description: "", price: "", stock_count: "", category: "cloths" as Category };
 
 function Dashboard({ onSignOut }: { onSignOut: () => Promise<void> }) {
@@ -190,7 +207,7 @@ function Dashboard({ onSignOut }: { onSignOut: () => Promise<void> }) {
           <Button type="button" size="sm" variant="secondary" disabled={writing || form.title.trim().length < 2}
             onClick={async () => {
               setWriting(true);
-              const r = await describeFn({ data: { title: form.title, category: form.category, notes: form.description.slice(0, 400) || undefined } });
+              const r = await describeFn({ data: { title: form.title, category: form.category, notes: form.description.slice(0, 400) || undefined, image: await aiImage(file, editing?.image) } });
               setWriting(false);
               if (r.error) toast.error(r.error); else setForm((f) => ({ ...f, description: r.text }));
             }}>
