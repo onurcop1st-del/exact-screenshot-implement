@@ -5,7 +5,8 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useCart } from "@/lib/cart";
-import { WHATSAPP_NUMBER, makeOrderCode, naira } from "@/lib/shop";
+import { WHATSAPP_NUMBER, fetchProducts, makeOrderCode, naira } from "@/lib/shop";
+import { useQuery } from "@tanstack/react-query";
 
 export const Route = createFileRoute("/get")({
   head: () => ({
@@ -24,6 +25,8 @@ export const Route = createFileRoute("/get")({
 function GetPage() {
   const { items, total, setQty, remove, orderCode, setOrderCode } = useCart();
   const [busy, setBusy] = useState(false);
+  const [open, setOpen] = useState<string | null>(null);
+  const { data: products = [] } = useQuery({ queryKey: ["products"], queryFn: fetchProducts });
 
   async function generate() {
     setBusy(true);
@@ -62,12 +65,16 @@ function GetPage() {
       <h1 className="text-5xl">Your GET</h1>
       <ul className="divide-y rounded-md border bg-card">
         {items.map((i) => (
-          <li key={i.id} className="flex items-center gap-3 p-3">
-            <div className="flex-1">
-              <div className="font-semibold">{i.title}</div>
+          <li key={i.id} className="p-3">
+           <div className="flex items-center gap-3">
+            {(() => { const pr = products.find((x) => x.id === i.id); return pr ? <img src={pr.image} alt={i.title} className="h-12 w-12 shrink-0 rounded-sm bg-muted object-cover" /> : <div className="h-12 w-12 shrink-0 rounded-sm bg-muted" />; })()}
+            <div className="min-w-0 flex-1">
+              <div className="truncate font-semibold">{i.title}</div>
               <div className="text-xs text-muted-foreground">
                 {i.code} · {naira(i.price)}
               </div>
+              <button type="button" onClick={() => setOpen(open === i.id ? null : i.id)} aria-expanded={open === i.id}
+                className="text-xs font-semibold text-primary">{open === i.id ? "See less" : "View"}</button>
             </div>
             <div className="flex items-center gap-1">
               <Button size="icon" variant="secondary" aria-label="Less" onClick={() => setQty(i.id, i.qty - 1)}>
@@ -81,6 +88,14 @@ function GetPage() {
                 <X className="h-4 w-4" />
               </Button>
             </div>
+           </div>
+            {open === i.id && (() => { const pr = products.find((x) => x.id === i.id); return (
+              <div className="mt-3 space-y-2">
+                {pr && <img src={pr.image} alt={i.title} className="max-h-80 w-full rounded-sm bg-muted object-contain" />}
+                <p className="whitespace-pre-line text-sm">{pr?.description || "No description yet."}</p>
+                <button type="button" onClick={() => setOpen(null)} className="text-xs font-semibold text-primary">See less</button>
+              </div>
+            ); })()}
           </li>
         ))}
       </ul>
